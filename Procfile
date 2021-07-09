@@ -1,1 +1,1 @@
-web: ./build/install/beatsnake/bin/beatsnake
+web: build/install/beatsnake/bin/beatsnake
