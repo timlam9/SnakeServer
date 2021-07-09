@@ -12,9 +12,15 @@ class Database {
 
         const val BEAT_SNAKE_DB = "beat_snake_db"
         const val USERS_COLLECTION = "users"
+        const val MONGODB_URI = "MONGODB_URI"
+
     }
 
-    private val connectionString: String = System.getenv("MONGODB_URI")
+    init {
+        print("Mongo_DB uri: ${System.getenv(MONGODB_URI)}")
+    }
+
+    private val connectionString: String = System.getenv(MONGODB_URI)
     private val client = KMongo.createClient(connectionString).coroutine
     private val database = client.getDatabase(BEAT_SNAKE_DB)
     private val usersCollection: CoroutineCollection<User> = database.getCollection(USERS_COLLECTION)
