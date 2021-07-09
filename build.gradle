@@ -7,13 +7,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 
-    Properties properties = new Properties()
-    def propertiesFile = project.rootProject.file('local.properties')
-    if (propertiesFile.exists()) {
-        properties.load(propertiesFile.newDataInputStream())
-    }
-    ext.MONGO_CONNECTION_STRING = properties.getProperty('mongo_connection_string')
-
 }
 
 apply plugin: 'kotlin'
