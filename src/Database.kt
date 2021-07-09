@@ -14,7 +14,7 @@ class Database {
         const val USERS_COLLECTION = "users"
     }
 
-    private val connectionString: String = "mongodb+srv://snaker:snake030721@cluster030721.pownn.mongodb.net/admin"
+    private val connectionString: String = "mongodb+srv://snaker:snake030721@cluster030721.pownn.mongodb.net/beat_snake_db?retryWrites=true&w=majority"
     private val client = KMongo.createClient(connectionString).coroutine
     private val database = client.getDatabase(BEAT_SNAKE_DB)
     private val usersCollection: CoroutineCollection<User> = database.getCollection(USERS_COLLECTION)
