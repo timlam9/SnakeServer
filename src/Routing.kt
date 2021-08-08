@@ -7,6 +7,8 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.litote.kmongo.coroutine.CoroutineCollection
+import org.litote.kmongo.coroutine.updateOne
+import org.litote.kmongo.util.idValue
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
@@ -17,13 +19,8 @@ fun Application.userRoutes() {
 
     routing {
         install(StatusPages) {
-            exception<AuthenticationException> { cause ->
-                call.respond(HttpStatusCode.Unauthorized)
-            }
-            exception<AuthorizationException> { cause ->
-                call.respond(HttpStatusCode.Forbidden)
-            }
-
+            exception<AuthenticationException> { call.respond(HttpStatusCode.Unauthorized) }
+            exception<AuthorizationException> { call.respond(HttpStatusCode.Forbidden) }
         }
 
         getAllUsers(collection = usersCollection)
@@ -36,13 +33,24 @@ private fun Routing.userRoute(collection: CoroutineCollection<User>) {
         createUser(collection = collection)
         getUser(collection = collection)
         deleteUser(collection = collection)
+        updateUser(collection = collection)
     }
 }
 
 private fun Route.createUser(collection: CoroutineCollection<User>) {
     post {
-        val requestBody = call.receive<User>()
-        val isSuccess = collection.insertOne(requestBody).wasAcknowledged()
+        val user: User = call.receive()
+        val isSuccess = collection.insertOne(user).wasAcknowledged()
+        val userID = user.idValue ?: user.id
+        val response = if (isSuccess) userID else ""
+        call.respond(response)
+    }
+}
+
+private fun Route.updateUser(collection: CoroutineCollection<User>) {
+    post {
+        val user: User = call.receive()
+        val isSuccess = collection.updateOne(user).wasAcknowledged()
         call.respond(isSuccess)
     }
 }
