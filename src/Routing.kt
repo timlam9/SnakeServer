@@ -30,28 +30,23 @@ fun Application.userRoutes() {
 
 private fun Routing.userRoute(collection: CoroutineCollection<User>) {
     route("/user") {
-        createUser(collection = collection)
         getUser(collection = collection)
         deleteUser(collection = collection)
         updateUser(collection = collection)
     }
 }
 
-private fun Route.createUser(collection: CoroutineCollection<User>) {
-    post {
-        val user: User = call.receive()
-        val isSuccess = collection.insertOne(user).wasAcknowledged()
-        val userID = user.idValue ?: user.id
-        val response = if (isSuccess) userID else ""
-        call.respond(response)
-    }
-}
-
 private fun Route.updateUser(collection: CoroutineCollection<User>) {
     post {
         val user: User = call.receive()
-        val isSuccess = collection.updateOne(user).wasAcknowledged()
-        call.respond(isSuccess)
+        val userID: String = user.id
+
+        when {
+            userID.isEmpty() -> collection.insertOne(user)
+            else -> collection.updateOne(user)
+        }
+
+        call.respond(userID)
     }
 }
 
