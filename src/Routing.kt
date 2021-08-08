@@ -46,7 +46,7 @@ private fun Route.updateUser(collection: CoroutineCollection<User>) {
             else -> collection.insertOne(user).wasAcknowledged()
         }
 
-        val response = if (isSuccess) userID else ""
+        val response: String = if (isSuccess) userID else "No id found"
 
         call.respond(response)
     }
