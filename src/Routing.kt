@@ -7,8 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.coroutine.updateOne
-import org.litote.kmongo.util.idValue
+import org.litote.kmongo.eq
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
@@ -42,12 +41,9 @@ private fun Route.updateUser(collection: CoroutineCollection<User>) {
         val userID: String = user.id
 
         val userExists = collection.findOneById(userID) != null
-        val updateUser = collection.updateOne(user).wasAcknowledged()
-        val createUser = collection.insertOne(user).wasAcknowledged()
-
         val isSuccess = when {
-            userExists -> updateUser
-            else -> createUser
+            userExists -> collection.updateOne(User::id eq user.id, user).wasAcknowledged()
+            else -> collection.insertOne(user).wasAcknowledged()
         }
 
         val response = if (isSuccess) userID else ""

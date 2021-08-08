@@ -16,10 +16,6 @@ class Database {
 
     }
 
-    init {
-        print("Mongo_DB uri: ${System.getenv(MONGODB_URI)}")
-    }
-
     private val connectionString: String = System.getenv(MONGODB_URI)
     private val client = KMongo.createClient(connectionString).coroutine
     private val database = client.getDatabase(BEAT_SNAKE_DB)
