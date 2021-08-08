@@ -41,12 +41,13 @@ private fun Route.updateUser(collection: CoroutineCollection<User>) {
         val user: User = call.receive()
         val userID: String = user.id
 
-        when {
-            userID.isEmpty() -> collection.insertOne(user)
-            else -> collection.updateOne(user)
+        val isSuccess = when {
+            userID.isEmpty() -> collection.insertOne(user).wasAcknowledged()
+            else -> collection.updateOne(user).wasAcknowledged()
         }
+        val response = if (isSuccess) userID else ""
 
-        call.respond(userID)
+        call.respond(response)
     }
 }
 
