@@ -2,8 +2,9 @@ package com.beatsnake
 
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
 
 class ApplicationTest {
     @Test
