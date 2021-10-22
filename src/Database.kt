@@ -3,8 +3,6 @@ package com.beatsnake
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
-import java.io.FileInputStream
-import java.util.*
 
 class Database {
 
@@ -22,13 +20,5 @@ class Database {
     private val usersCollection: CoroutineCollection<User> = database.getCollection(USERS_COLLECTION)
 
     fun getUsersCollection(): CoroutineCollection<User> = usersCollection
-
-    private fun getConnectionString(): String {
-        val fis = FileInputStream("local.properties")
-        val prop = Properties()
-        prop.load(fis)
-
-        return prop.getProperty("mongo_connection_string")
-    }
 
 }
