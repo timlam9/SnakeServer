@@ -1,4 +1,4 @@
-package com.beatsnake
+package com.beatsnake.database
 
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.coroutine

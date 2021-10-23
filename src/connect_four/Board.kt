@@ -1,7 +1,6 @@
 package com.beatsnake.connect_four
 
 import kotlinx.serialization.Serializable
-import sun.invoke.empty.Empty
 
 @Serializable
 data class Board(val columns: List<Column>) {

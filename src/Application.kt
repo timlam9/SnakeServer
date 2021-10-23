@@ -1,5 +1,8 @@
 package com.beatsnake
 
+import com.beatsnake.routing.AuthenticationException
+import com.beatsnake.routing.AuthorizationException
+import com.beatsnake.routing.scoreFourRoute
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.gson.*

@@ -1,18 +1,13 @@
-package com.beatsnake
+package com.beatsnake.routing
 
+import com.beatsnake.database.Database
+import com.beatsnake.database.User
 import io.ktor.application.*
-import io.ktor.http.cio.websocket.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.websocket.*
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
-import java.util.*
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
