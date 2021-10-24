@@ -1,6 +1,7 @@
 package com.beatsnake.routing
 
 import com.beatsnake.connect_four.*
+import com.beatsnake.connect_four.SocketMessage.SocketError
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
@@ -61,16 +62,21 @@ private suspend fun handleMove(userID: String, move: Int) {
         else -> Turn.Opponent
     }
 
-    game = game.copy(board = game.board.update(updatedSlot = move, turn = turn))
-    games.updateGame(game)
+    try {
+        game = game.copy(board = game.board.update(updatedSlot = move, turn = turn))
+        games.updateGame(game)
 
-    val playerResponse = game.board.updateGameStatus(turn.next())
-    val opponentResponse = game.board.updateGameStatus(turn)
+        val playerResponse = game.board.updateGameStatus(turn.next())
+        val opponentResponse = game.board.updateGameStatus(turn)
 
-    game.player.session.send(playerResponse.toJson())
-    game.opponent.session.send(opponentResponse.toJson())
+        game.player.session.send(playerResponse.toJson())
+        game.opponent.session.send(opponentResponse.toJson())
 
-    removeGameWhenGameIsOver(playerResponse, opponentResponse, game)
+        removeGameWhenGameIsOver(playerResponse, opponentResponse, game)
+    } catch (e: ColumnAlreadyFilledException) {
+        game.player.session.send(SocketError(e.message).toJson())
+    }
+
 }
 
 private fun removeGameWhenGameIsOver(
