@@ -46,11 +46,24 @@ private suspend fun DefaultWebSocketServerSession.responseToClient() {
                 when (val message = Json.decodeFromString(SocketMessage.serializer(), receivedText)) {
                     is SocketMessage.Move -> handleMove(message.userID, message.move)
                     is SocketMessage.GameOver -> Unit
+                    is SocketMessage.Disconnected -> sendDisconnectionMessageAndDestroyGame(message)
                 }
             }
             else -> Unit
         }
     }
+}
+
+private suspend fun sendDisconnectionMessageAndDestroyGame(message: SocketMessage.Disconnected) {
+    val game = findGameByPlayerID(message.userID) ?: return
+    val error = SocketError("ConnectionLost").toJson()
+
+    if (game.player.id == message.userID)
+        game.opponent.session.send(error)
+    else
+        game.player.session.send(error)
+
+    games.remove(game)
 }
 
 private suspend fun handleMove(userID: String, move: Int) {
@@ -74,7 +87,10 @@ private suspend fun handleMove(userID: String, move: Int) {
 
         removeGameWhenGameIsOver(playerResponse, opponentResponse, game)
     } catch (e: ColumnAlreadyFilledException) {
-        game.player.session.send(SocketError(e.message).toJson())
+        when (userID) {
+            game.player.id -> game.player.session.send(SocketError("ColumnAlreadyFilled").toJson())
+            game.opponent.id -> game.opponent.session.send(SocketError("ColumnAlreadyFilled").toJson())
+        }
     }
 
 }

@@ -24,8 +24,12 @@ sealed class SocketMessage {
     data class GameOver(val board: Board, val winner: GameOverStatus, val turn: Turn) : SocketMessage()
 
     @Serializable
-    @SerialName("error")
-    data class SocketError(val message: String) : SocketMessage()
+    @SerialName("socket_error")
+    data class SocketError(val errorType: String) : SocketMessage()
+
+    @Serializable
+    @SerialName("disconnected")
+    data class Disconnected(val userID: String) : SocketMessage()
 
     fun toJson() = Json.encodeToString(serializer(), this)
 
