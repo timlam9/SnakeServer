@@ -5,7 +5,6 @@ import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import java.util.*
 
@@ -13,7 +12,6 @@ private val connections = Collections.synchronizedSet<Connection?>(LinkedHashSet
 private var games: MutableList<Game> = mutableListOf()
 private var creatingGame = false
 
-@ExperimentalSerializationApi
 fun Application.scoreFourRoute() {
     routing {
         webSocket("/scoreFour") {
@@ -38,7 +36,7 @@ private fun Application.logConnections() {
     log.info("\n")
 }
 
-@ExperimentalSerializationApi
+
 private suspend fun DefaultWebSocketServerSession.responseToClient() {
     for (frame in incoming) {
         when (frame) {
@@ -122,6 +120,6 @@ private fun MutableList<Game>.updateGame(game: Game) {
     add(game)
 }
 
-private fun findGameByPlayerID(userID: String): Game? = games.find { it.player.id == userID || it.opponent.id == userID }
+private fun findGameByPlayerID(userID: String) = games.find { it.player.id == userID || it.opponent.id == userID }
 
 private fun findGameByGameID(gameID: String): Game? = games.find { it.gameID == gameID }
