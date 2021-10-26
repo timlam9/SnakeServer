@@ -1,5 +1,8 @@
-package com.beatsnake.connect_four
+package com.beatsnake.connect_four.data
 
+import com.beatsnake.connect_four.domain.models.GameOverStatus
+import com.beatsnake.connect_four.domain.models.Turn
+import connect_four.domain.models.Board
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

@@ -1,7 +1,10 @@
-package com.beatsnake.routing
+package com.beatsnake.connect_four.data
 
-import com.beatsnake.connect_four.*
-import com.beatsnake.connect_four.SocketMessage.SocketError
+import com.beatsnake.connect_four.data.SocketMessage.SocketError
+import com.beatsnake.connect_four.domain.models.Game
+import com.beatsnake.connect_four.domain.models.ColumnAlreadyFilledException
+import com.beatsnake.connect_four.domain.models.Turn
+import connect_four.domain.models.Board
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*

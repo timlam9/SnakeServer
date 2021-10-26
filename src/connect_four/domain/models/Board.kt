@@ -1,5 +1,8 @@
-package com.beatsnake.connect_four
+package connect_four.domain.models
 
+import com.beatsnake.connect_four.data.SocketMessage
+import com.beatsnake.connect_four.data.SocketMessage.*
+import com.beatsnake.connect_four.domain.models.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -40,9 +43,9 @@ data class Board(val columns: List<Column>) {
         val height = columns.first().slots.size
 
         return when {
-            isGameWon(width, height) -> SocketMessage.GameOver(this, GameOverStatus.Won, turn)
-            drawCheck() -> SocketMessage.GameOver(this, GameOverStatus.Draw, turn)
-            else -> SocketMessage.PlayerTurn(this, turn)
+            isGameWon(width, height) -> GameOver(this, GameOverStatus.Won, turn)
+            drawCheck() -> GameOver(this, GameOverStatus.Draw, turn)
+            else -> PlayerTurn(this, turn)
         }
     }
 
