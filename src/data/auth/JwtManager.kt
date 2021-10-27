@@ -10,26 +10,7 @@ class JwtManager {
 
     companion object {
 
-        private const val EXPIRATION_INTERVAL = 1 * 60_000
-
-         fun JWTAuthenticationProvider.Configuration.verifyToken() {
-            verifier(
-                JWT.require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .build()
-            )
-        }
-
-        fun JWTAuthenticationProvider.Configuration.validateToken() {
-            validate { credential ->
-                if (credential.payload.getClaim(USERNAME).asString().isNotEmpty()) {
-                    JWTPrincipal(credential.payload)
-                } else {
-                    null
-                }
-            }
-        }
+        private const val EXPIRATION_INTERVAL = 10 * 60_000
 
     }
 

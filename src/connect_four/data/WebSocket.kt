@@ -4,8 +4,10 @@ import com.beatsnake.connect_four.data.SocketMessage.SocketError
 import com.beatsnake.connect_four.domain.models.Game
 import com.beatsnake.connect_four.domain.models.ColumnAlreadyFilledException
 import com.beatsnake.connect_four.domain.models.Turn
+import com.beatsnake.domain.JWT_AUTH
 import connect_four.domain.models.Board
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
@@ -18,10 +20,12 @@ private var creatingGame = false
 
 fun Application.scoreFourRoute() {
     routing {
-        webSocket("/scoreFour") {
-            connectPlayers()
-            logConnections()
-            responseToClient()
+        authenticate(JWT_AUTH) {
+            webSocket("/scoreFour") {
+                connectPlayers()
+                logConnections()
+                responseToClient()
+            }
         }
     }
 }

@@ -1,13 +1,11 @@
 package com.beatsnake.data.models
 
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class User(
-    @BsonId
-    val id: String = ObjectId().toString(),
-    val email: String = "",
-    val name: String = "",
-    val password: String = "",
+    val id: String? = null,
+    val name: String,
+    val email: String,
     val highscore: Int = 0
 )

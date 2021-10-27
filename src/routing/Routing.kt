@@ -1,7 +1,7 @@
 package com.beatsnake.routing
 
 import com.beatsnake.data.database.UsersRepository
-import com.beatsnake.data.models.User
+import com.beatsnake.data.models.UserRaw
 import com.beatsnake.domain.*
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -28,7 +28,7 @@ private fun Routing.userRoute(repository: UsersRepository) {
 
 private fun Route.updateUser(repository: UsersRepository) {
     post {
-        with(call.receive() as User) {
+        with(call.receive() as UserRaw) {
             val response = when (repository.updateUser(email, highscore)) {
                 true -> email
                 false -> NO_USER_FOUND

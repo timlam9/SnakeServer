@@ -1,8 +1,10 @@
 package com.beatsnake
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.beatsnake.connect_four.data.scoreFourRoute
-import com.beatsnake.data.auth.JwtManager.Companion.validateToken
-import com.beatsnake.data.auth.JwtManager.Companion.verifyToken
+import com.beatsnake.data.auth.JwtManager
+import com.beatsnake.data.database.Database
 import com.beatsnake.data.database.UsersRepository
 import com.beatsnake.domain.*
 import com.beatsnake.routing.registerRouting
@@ -17,8 +19,6 @@ import io.ktor.http.cio.websocket.*
 import io.ktor.response.*
 import io.ktor.serialization.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.time.Duration
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -50,21 +50,34 @@ private fun Application.installs() {
     install(Authentication) {
         jwt(JWT_AUTH) {
             realm = myRealm
-            verifyToken()
-            validateToken()
+            verifier(
+                JWT.require(Algorithm.HMAC256(secret))
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .build()
+            )
+            validate { credential ->
+                if (credential.payload.getClaim(USERNAME).asString().isNotEmpty()) {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    null
+                }
+            }
         }
     }
 }
 
+private fun Application.initRoutes() {
+    val usersRepository = UsersRepository(Database())
+    val jwtManager = JwtManager()
 
-private fun Application.initRoutes(usersRepository: UsersRepository = UsersRepository()) {
-    registerRouting(usersRepository)
+    registerRouting(usersRepository, jwtManager)
     userRoutes(usersRepository)
     scoreFourRoute()
-    
-    CoroutineScope(this.coroutineContext).launch {
-        log.info("Users: ${usersRepository.getAllUsers()}")
-    }
+
+//    CoroutineScope(this.coroutineContext).launch {
+//        log.info("Users: ${usersRepository.getAllUsers()}")
+//    }
 
 }
 

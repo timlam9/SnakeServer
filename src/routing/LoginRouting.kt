@@ -1,5 +1,6 @@
 package com.beatsnake.routing
 
+import com.beatsnake.data.auth.AuthToken
 import com.beatsnake.data.auth.JwtManager
 import com.beatsnake.data.database.UsersRepository
 import com.beatsnake.data.models.RefreshTokenCredentials
@@ -10,11 +11,11 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Application.registerRouting(usersRepository: UsersRepository, jwtManager: JwtManager = JwtManager()) {
+fun Application.registerRouting(usersRepository: UsersRepository, jwtManager: JwtManager) {
     routing {
         post(POST_USER) {
             with(call.receive<RegistrationCredentials>()) {
-                val token = when(usersRepository.addUserToDatabase(name, email, password)) {
+                val token: String = when(usersRepository.addUserToDatabase(name, email, password)) {
                     true -> jwtManager.generateToken(name, email)
                     false -> EMPTY
                 }
@@ -24,12 +25,12 @@ fun Application.registerRouting(usersRepository: UsersRepository, jwtManager: Jw
         }
         post(REFRESH_TOKEN) {
             with(call.receive<RefreshTokenCredentials>()) {
-                val token = when(usersRepository.userExists(email)) {
-                    true -> jwtManager.generateToken(name, email)
-                    false -> EMPTY
+                val token: String = when(usersRepository.getUser(email)) {
+                    null -> EMPTY
+                    else -> jwtManager.generateToken(name, email)
                 }
 
-                call.respond(token)
+                call.respond(AuthToken(token))
             }
         }
     }
