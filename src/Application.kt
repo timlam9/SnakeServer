@@ -3,6 +3,7 @@ package com.beatsnake
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.beatsnake.connect_four.data.scoreFourRoute
+import com.beatsnake.connect_four.domain.ScoreFourEngine
 import com.beatsnake.data.auth.JwtManager
 import com.beatsnake.data.database.Database
 import com.beatsnake.data.database.UsersRepository
@@ -23,9 +24,7 @@ import java.time.Duration
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-@Suppress("unused")
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+fun Application.module() {
     installs()
     initRoutes()
 }
@@ -70,14 +69,11 @@ private fun Application.installs() {
 private fun Application.initRoutes() {
     val usersRepository = UsersRepository(Database())
     val jwtManager = JwtManager()
+    val scoreFourEngine = ScoreFourEngine()
 
     registerRouting(usersRepository, jwtManager)
     userRoutes(usersRepository)
-    scoreFourRoute()
-
-//    CoroutineScope(this.coroutineContext).launch {
-//        log.info("Users: ${usersRepository.getAllUsers()}")
-//    }
+    scoreFourRoute(scoreFourEngine)
 
 }
 
