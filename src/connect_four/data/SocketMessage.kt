@@ -11,16 +11,24 @@ import kotlinx.serialization.json.Json
 sealed class SocketMessage {
 
     @Serializable
+    @SerialName("connect")
+    data class Connect(val email: String) : SocketMessage()
+
+    @Serializable
+    @SerialName("disconnect")
+    data class Disconnect(val email: String) : SocketMessage()
+
+    @Serializable
+    @SerialName("move")
+    data class Move(val email: String, val move: Int) : SocketMessage()
+
+    @Serializable
     @SerialName("start_turn")
-    data class StartTurn(val board: Board, val turn: Turn, val userID: String) : SocketMessage()
+    data class StartTurn(val board: Board, val turn: Turn) : SocketMessage()
 
     @Serializable
     @SerialName("player_turn")
     data class PlayerTurn(val board: Board, val turn: Turn) : SocketMessage()
-
-    @Serializable
-    @SerialName("move")
-    data class Move(val userID: String, val move: Int) : SocketMessage()
 
     @Serializable
     @SerialName("game_over")
@@ -29,10 +37,6 @@ sealed class SocketMessage {
     @Serializable
     @SerialName("socket_error")
     data class SocketError(val errorType: String) : SocketMessage()
-
-    @Serializable
-    @SerialName("disconnected")
-    data class Disconnected(val userID: String) : SocketMessage()
 
     fun toJson() = Json.encodeToString(serializer(), this)
 

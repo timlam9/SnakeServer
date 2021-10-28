@@ -4,5 +4,5 @@ import io.ktor.http.cio.websocket.*
 
 data class Connection(
     val session: DefaultWebSocketSession,
-    val id: String = ""
+    val email: String
 )
