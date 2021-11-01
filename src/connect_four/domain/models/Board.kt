@@ -1,7 +1,8 @@
 package connect_four.domain.models
 
-import com.beatsnake.connect_four.data.SocketMessage
-import com.beatsnake.connect_four.data.SocketMessage.*
+import com.beatsnake.connect_four.data.SocketMessage.OutBound
+import com.beatsnake.connect_four.data.SocketMessage.OutBound.GameOver
+import com.beatsnake.connect_four.data.SocketMessage.OutBound.PlayerTurn
 import com.beatsnake.connect_four.domain.models.*
 import kotlinx.serialization.Serializable
 
@@ -38,7 +39,7 @@ data class Board(val columns: List<Column>) {
         }
     )
 
-    fun updateGameStatus(turn: Turn): SocketMessage {
+    fun updateGameStatus(turn: Turn): OutBound {
         val width = columns.size
         val height = columns.first().slots.size
 

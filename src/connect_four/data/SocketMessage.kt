@@ -11,32 +11,42 @@ import kotlinx.serialization.json.Json
 sealed class SocketMessage {
 
     @Serializable
-    @SerialName("connect")
-    data class Connect(val email: String) : SocketMessage()
+    sealed class InBound: SocketMessage() {
+
+        @Serializable
+        @SerialName("connect")
+        data class Connect(val email: String) : InBound()
+
+        @Serializable
+        @SerialName("disconnect")
+        data class Disconnect(val email: String) : InBound()
+
+        @Serializable
+        @SerialName("move")
+        data class Move(val email: String, val move: Int) : InBound()
+
+    }
 
     @Serializable
-    @SerialName("disconnect")
-    data class Disconnect(val email: String) : SocketMessage()
+    sealed class OutBound: SocketMessage() {
 
-    @Serializable
-    @SerialName("move")
-    data class Move(val email: String, val move: Int) : SocketMessage()
+        @Serializable
+        @SerialName("start_turn")
+        data class StartTurn(val board: Board, val turn: Turn) : OutBound()
 
-    @Serializable
-    @SerialName("start_turn")
-    data class StartTurn(val board: Board, val turn: Turn) : SocketMessage()
+        @Serializable
+        @SerialName("player_turn")
+        data class PlayerTurn(val board: Board, val turn: Turn) : OutBound()
 
-    @Serializable
-    @SerialName("player_turn")
-    data class PlayerTurn(val board: Board, val turn: Turn) : SocketMessage()
+        @Serializable
+        @SerialName("game_over")
+        data class GameOver(val board: Board, val winner: GameOverStatus, val turn: Turn) : OutBound()
 
-    @Serializable
-    @SerialName("game_over")
-    data class GameOver(val board: Board, val winner: GameOverStatus, val turn: Turn) : SocketMessage()
+        @Serializable
+        @SerialName("socket_error")
+        data class SocketError(val errorType: String) : OutBound()
 
-    @Serializable
-    @SerialName("socket_error")
-    data class SocketError(val errorType: String) : SocketMessage()
+    }
 
     fun toJson() = Json.encodeToString(serializer(), this)
 

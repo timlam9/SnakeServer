@@ -1,6 +1,7 @@
 package com.beatsnake.connect_four.data
 
 import com.beatsnake.connect_four.data.SocketMessage.*
+import com.beatsnake.connect_four.data.SocketMessage.InBound.*
 import com.beatsnake.connect_four.domain.ScoreFourEngine
 import com.beatsnake.domain.JWT_AUTH
 import com.beatsnake.domain.SCORE_FOUR
@@ -20,7 +21,7 @@ private suspend fun DefaultWebSocketServerSession.responseToClient(scoreFourEngi
         when (frame) {
             is Frame.Text -> {
                 val receivedText = frame.readText()
-                when (val message = Json.decodeFromString(SocketMessage.serializer(), receivedText)) {
+                when (val message = Json.decodeFromString(InBound.serializer(), receivedText)) {
                     is Connect -> connectPlayer(scoreFourEngine,message.email)
                     is Move -> scoreFourEngine.handleMove(message.email, message.move)
                     is Disconnect -> scoreFourEngine.sendDisconnectionMessageAndDestroyGame(message)

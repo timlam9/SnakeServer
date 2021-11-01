@@ -1,7 +1,9 @@
 package com.beatsnake.connect_four.domain
 
 import com.beatsnake.connect_four.data.Connection
-import com.beatsnake.connect_four.data.SocketMessage
+import com.beatsnake.connect_four.data.SocketMessage.InBound.Disconnect
+import com.beatsnake.connect_four.data.SocketMessage.OutBound
+import com.beatsnake.connect_four.data.SocketMessage.OutBound.*
 import com.beatsnake.connect_four.domain.models.ColumnAlreadyFilledException
 import com.beatsnake.connect_four.domain.models.Game
 import com.beatsnake.connect_four.domain.models.Turn
@@ -25,12 +27,12 @@ class ScoreFourEngine {
         if (connections.size >= 2 && !creatingGame) createNewGame()
     }
 
-    suspend fun sendDisconnectionMessageAndDestroyGame(message: SocketMessage.Disconnect) {
+    suspend fun sendDisconnectionMessageAndDestroyGame(message: Disconnect) {
         val game = findGameByPlayerEmail(message.email) ?: return
         connections.removeIf { it.email == message.email }
         games.remove(game)
 
-        val error = SocketMessage.SocketError("ConnectionLost").toJson()
+        val error = SocketError("ConnectionLost").toJson()
         when (game.player.email) {
             message.email -> game.opponent.session.send(error)
             else -> game.player.session.send(error)
@@ -59,9 +61,9 @@ class ScoreFourEngine {
             removeGameWhenGameIsOver(playerResponse, opponentResponse, game)
         } catch (e: ColumnAlreadyFilledException) {
             when (email) {
-                game.player.email -> game.player.session.send(SocketMessage.SocketError("ColumnAlreadyFilled").toJson())
+                game.player.email -> game.player.session.send(SocketError("ColumnAlreadyFilled").toJson())
                 game.opponent.email -> game.opponent.session.send(
-                    SocketMessage.SocketError("ColumnAlreadyFilled").toJson()
+                    SocketError("ColumnAlreadyFilled").toJson()
                 )
             }
         }
@@ -94,13 +96,13 @@ class ScoreFourEngine {
     }
 
     private fun removeGameWhenGameIsOver(
-        playerResponse: SocketMessage,
-        opponentResponse: SocketMessage,
+        playerResponse: OutBound,
+        opponentResponse: OutBound,
         game: Game
     ) {
         if (
-            playerResponse is SocketMessage.GameOver ||
-            opponentResponse is SocketMessage.GameOver
+            playerResponse is GameOver ||
+            opponentResponse is GameOver
         ) {
             games.remove(findGameByGameID(game.gameID))
         }
@@ -108,7 +110,7 @@ class ScoreFourEngine {
 
     private fun MutableSet<Connection>.getAndRemoveFirst(): Connection = first().apply { remove(first()) }
 
-    private fun Game.encodeInitialResponse(turn: Turn) = SocketMessage.StartTurn(
+    private fun Game.encodeInitialResponse(turn: Turn) = StartTurn(
         board = board,
         turn = turn
     ).toJson()
