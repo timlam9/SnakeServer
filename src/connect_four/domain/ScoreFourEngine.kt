@@ -10,13 +10,15 @@ import com.beatsnake.connect_four.domain.models.Turn
 import connect_four.domain.models.Board
 import io.ktor.http.cio.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ScoreFourEngine {
 
     private val connections = Collections.synchronizedSet<Connection?>(LinkedHashSet())
     private var games: MutableList<Game> = mutableListOf()
-    private var creatingGame = false
+    private var creatingGame = MutableStateFlow(false)
 
     fun createConnection(serverSession: DefaultWebSocketServerSession, email: String) {
         val thisConnection = Connection(serverSession, email)
@@ -24,7 +26,7 @@ class ScoreFourEngine {
     }
 
     suspend fun createNewGameIfPossible() {
-        if (connections.size >= 2 && !creatingGame) createNewGame()
+        if (connections.size >= 2 && !creatingGame.value) createNewGame()
     }
 
     suspend fun sendDisconnectionMessageAndDestroyGame(message: Disconnect) {
@@ -70,7 +72,7 @@ class ScoreFourEngine {
     }
 
     private suspend fun createNewGame() {
-        creatingGame = true
+        creatingGame.value = true
 
         val game = Game(
             gameID = UUID.randomUUID().toString(),
@@ -86,7 +88,7 @@ class ScoreFourEngine {
             opponent.session.send(encodeInitialResponse(Turn.Opponent))
         }
 
-        creatingGame = false
+        creatingGame.value = false
     }
 
     private fun findGameByGameID(gameID: String): Game? = games.find { it.gameID == gameID }
