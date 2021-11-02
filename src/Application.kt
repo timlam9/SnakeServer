@@ -2,6 +2,7 @@ package com.beatsnake
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.beatsnake.connect_four.data.Lobby
 import com.beatsnake.connect_four.data.scoreFourRoute
 import com.beatsnake.connect_four.domain.ScoreFourEngine
 import com.beatsnake.data.auth.JwtManager
@@ -70,11 +71,11 @@ private fun Application.initRoutes() {
     val usersRepository = UsersRepository(Database())
     val jwtManager = JwtManager()
     val scoreFourEngine = ScoreFourEngine()
+    val lobby = Lobby(this)
 
     registerRouting(usersRepository, jwtManager)
     userRoutes(usersRepository)
-    scoreFourRoute(scoreFourEngine)
-
+    scoreFourRoute(scoreFourEngine, lobby)
 }
 
 

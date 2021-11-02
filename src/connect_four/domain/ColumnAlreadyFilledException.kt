@@ -1,4 +1,4 @@
-package com.beatsnake.connect_four.domain.models
+package com.beatsnake.connect_four.domain
 
 object ColumnAlreadyFilledException : Exception() {
 
