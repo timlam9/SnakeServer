@@ -3,15 +3,10 @@ package com.beatsnake.domain
 // JWT
 const val JWT_AUTH = "auth-jwt"
 
-const val JWT_REALM = "jwt.realm"
+const val JWT_REALM = "JWT_REALM"
 const val SECRET = "SECRET"
 const val AUDIENCE = "AUDIENCE"
 const val ISSUER = "ISSUER"
-
-val myRealm: String = System.getenv(JWT_REALM)
-val secret: String = System.getenv(SECRET)
-val audience: String = System.getenv(AUDIENCE)
-val issuer: String = System.getenv(ISSUER)
 
 // Constants
 const val EMPTY = ""

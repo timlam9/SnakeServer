@@ -12,6 +12,11 @@ class JwtManager {
 
         private const val EXPIRATION_INTERVAL = 10 * 60_000
 
+        val jwtRealm: String = System.getenv(JWT_REALM)
+        val secret: String = System.getenv(SECRET)
+        val audience: String = System.getenv(AUDIENCE)
+        val issuer: String = System.getenv(ISSUER)
+
     }
 
     private val expirationDate = Date(System.currentTimeMillis() + EXPIRATION_INTERVAL)

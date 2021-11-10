@@ -6,6 +6,10 @@ import com.beatsnake.connect_four.data.Lobby
 import com.beatsnake.connect_four.data.scoreFourRoute
 import com.beatsnake.connect_four.domain.ScoreFourEngine
 import com.beatsnake.data.auth.JwtManager
+import com.beatsnake.data.auth.JwtManager.Companion.audience
+import com.beatsnake.data.auth.JwtManager.Companion.issuer
+import com.beatsnake.data.auth.JwtManager.Companion.jwtRealm
+import com.beatsnake.data.auth.JwtManager.Companion.secret
 import com.beatsnake.data.database.Database
 import com.beatsnake.data.database.UsersRepository
 import com.beatsnake.domain.*
@@ -47,7 +51,7 @@ private fun Application.installs() {
     }
     install(Authentication) {
         jwt(JWT_AUTH) {
-            realm = myRealm
+            realm = jwtRealm
             verifier(
                 JWT.require(Algorithm.HMAC256(secret))
                     .withAudience(audience)
