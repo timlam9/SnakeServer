@@ -31,8 +31,6 @@ fun Application.module() {
 }
 
 private fun Application.installs() {
-    val myRealm = environment.config.property(JWT_REALM).getString()
-
     install(ContentNegotiation) {
         gson()
         json()
