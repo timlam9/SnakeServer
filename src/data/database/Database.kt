@@ -15,7 +15,7 @@ class Database {
 
     }
 
-    private val connectionString: String = "mongodb+srv://snaker:snake030721@cluster030721.pownn.mongodb.net/admin" //System.getenv(MONGODB_URI)
+    private val connectionString: String = System.getenv(MONGODB_URI)
     private val client = KMongo.createClient(connectionString).coroutine
     private val database = client.getDatabase(BEAT_SNAKE_DB)
     private val usersCollection: CoroutineCollection<UserRaw> = database.getCollection(USERS_COLLECTION)
